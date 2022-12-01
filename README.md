@@ -1,5 +1,5 @@
 # Truffle.TV Theatre like Twitch - for TamperMonkey 
-### Like Twitch, when Truffle.TV Custom Theatre Mode is active and chat is hidden the video will resize to the full browser width
+### Resize video to fit full width when chat is hidden
 A TampkerMonkey script to add functionality to Truffle.TV chrome extension Custome Theatre Mode
 Tested on Chromium 107
 
