@@ -146,6 +146,9 @@ body[data-mogul-theater-mode] .truffle-unobtrusive-hide-chat .ytp-chapter-hover-
             document.head.appendChild(trufflefulltheatre_staticstyle);
 
             console.log(`${log_title}: Sucessfully applied`);
+	    
+	    // Failsafe, check button state
+            new Promise(resolve => setTimeout(checkFullTheatreStyle,500));
         }
     }
     addFullTheatre();
