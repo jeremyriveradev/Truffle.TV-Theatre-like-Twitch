@@ -52,6 +52,11 @@
                 let chat = document.querySelector("#chat");
                 let chat_button = chat.querySelector("button");
 
+                if (!document.querySelector("Truffle-Full-Theatre-Twitch-Hide-Chat-Icon") 
+                && document.querySelector("body[data-mogul-theater-mode]")) {
+                    console.log(document.querySelector('data-mogul-theater-mode'));
+                    document.querySelector("#show-hide-button button").appendChild(icon);
+                }
                 if (chat_button.ariaPressed === "true" &&
                 !ytdwatchflexy.classList.contains("truffle-unobtrusive-hide-chat")) {
                     // Fix desynced styles caused by lag
@@ -72,9 +77,17 @@
             }
         }
         // Desync Likely on Live Page Change (no document load even is ran), run fallback function
-        new MutationObserver((changes) => { changes.forEach(change => {
-                if(change.attributeName.includes('src')) { new Promise(resolve => setTimeout(checkFullTheatreStyle,500)) }});
-        }).observe(ytdwatchflexy.querySelector("video"), {attributes : true});
+        // Correct styles if Custom Theatre Mode turned off
+        var error_check = new MutationObserver((changes) => { changes.forEach(change => {
+                if( change.attributeName.includes('src') || change.attributeName.includes('data-mogul-theater-mode') ) { 
+                    if (!document.querySelector("body[data-mogul-theater-mode]")) {
+                        let icon = document.querySelector("#Truffle-Full-Theatre-Twitch-Hide-Chat-Icon");
+                        if(icon) { icon.remove(); }
+                        dispatchEvent(new Event('resize')); }
+                    new Promise(resolve => setTimeout(checkFullTheatreStyle,500)) }});
+        })
+        error_check.observe(ytdwatchflexy.querySelector("video"), {attributes : true});
+        error_check.observe(document.body, {attributes : true});
 
         // Clean up conflicting rules from Truffle.TV Custom Theatre Mode
         const TRUFFLE_SIGNATURE = "/* Make";
@@ -111,7 +124,7 @@ body[data-mogul-theater-mode] ytd-watch-flexy[theater] #secondary {
 body[data-mogul-theater-mode] ytd-watch-flexy[theater] #secondary #chips {
    padding-top: 10px; }
 /* Position Truffle Support button to adjustments */
-.truffle-embed {
+body[data-mogul-theater-mode] .truffle-embed {
     margin-top: -42px !important;
     margin-bottom: 43px !important; }
 
@@ -215,13 +228,8 @@ body[data-mogul-theater-mode] #player-theater-container:hover ~ #columns > #seco
 
         // Apply/Remove Full Theatre class on 'Show Chat'/'Hide Chat' button click
         ytdchatbut.addEventListener("click", () => {
-            // If truffle theatre mode turned off after class already applied, remove class
-            if(document.body.getAttribute('data-mogul-theater-mode') == null && ytdwatchflexy.classList.contains("truffle-unobtrusive-hide-chat")) {
-                ytdwatchflexy.classList.remove('truffle-unobtrusive-hide-chat');
-                dispatchEvent(new Event('resize'));
-                return }
-            // YT API removes unknown HTML... replace the icon
-            document.querySelector("#show-hide-button button").appendChild(icon);
+            // skip run if Custom Theatre Mode isn't active
+            if(!document.querySelector('body[data-mogul-theater-mode]')) { return }
             // Apply/Remove class
             ytdwatchflexy.classList.toggle('truffle-unobtrusive-hide-chat');
             // Failsafe function
