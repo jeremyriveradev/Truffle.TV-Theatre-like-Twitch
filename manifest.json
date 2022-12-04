@@ -1,12 +1,13 @@
 {
-  "name": "Truffle Full Theatre",
+  "name": "Truffle Addon - Theatre like Twitch",
   "description": "Video resize when chat is hidden",
   "version": "1.0",
   "manifest_version": 3,
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/watch?"],
-      "js": ["Truffle-Theatre-like-Twitch.js"],
+      "matches": ["*://youtube.com/*",
+        "*://www.youtube.com/*"],
+      "js": ["content-scripts/content-script.js"],
       "all_frames": true
     }
   ],
